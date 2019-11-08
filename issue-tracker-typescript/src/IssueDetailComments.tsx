@@ -95,7 +95,7 @@ export default function IssueDetailComments(props: {
                   <SuspenseImage
                     className="issue-comment-author-image"
                     title={`${comment!.author!.login}'s avatar`}
-                    src={comment!.author!.avatarUrl as string}
+                    src={comment!.author!.avatarUrl}
                   />
                   <div className="issue-comment-author-name">
                     {comment!.author!.login}

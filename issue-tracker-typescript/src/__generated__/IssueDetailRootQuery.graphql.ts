@@ -11,11 +11,11 @@ export type IssueDetailRootQueryResponse = {
         readonly number?: number;
         readonly author?: {
             readonly login: string;
-            readonly avatarUrl: unknown;
+            readonly avatarUrl: string;
         } | null;
         readonly body?: string;
         readonly closed?: boolean;
-        readonly url?: unknown;
+        readonly url?: string;
         readonly " $fragmentRefs": FragmentRefs<"IssueDetailComments_issue" | "IssueActions_issue">;
     } | null;
 };

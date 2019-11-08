@@ -47,7 +47,7 @@ export default function IssueDetailRoot(props: any) {
         #{issue.number} - {issue.title} - {issue.closed ? 'Closed' : 'Open'}
         <a
           className="issue-title-github-link"
-          href={issue.url as any}
+          href={issue.url}
           title="Issue on GitHub"
         >
           View on GitHub
@@ -57,7 +57,7 @@ export default function IssueDetailRoot(props: any) {
         <SuspenseImage
           className="issue-comment-author-image"
           title={`${issue.author!.login}'s avatar`}
-          src={issue.author!.avatarUrl as string}
+          src={issue.author!.avatarUrl}
         />
         <div className="issue-comment-author-name">{issue.author!.login}</div>
         <div className="issue-comment-body">

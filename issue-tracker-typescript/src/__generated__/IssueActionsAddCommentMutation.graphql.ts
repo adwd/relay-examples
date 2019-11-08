@@ -20,7 +20,7 @@ export type IssueActionsAddCommentMutationResponse = {
                 readonly id: string;
                 readonly author: {
                     readonly login: string;
-                    readonly avatarUrl: unknown;
+                    readonly avatarUrl: string;
                 } | null;
                 readonly body: string;
             } | null;

@@ -30,7 +30,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "update-schema": "get-graphql-schema -h \"Authorization=bearer $REACT_APP_GITHUB_AUTH_TOKEN\" https://api.github.com/graphql > schema/schema.graphql",
-    "relay": "yarn run relay-compiler --schema schema/schema.graphql --language typescript --src ./src/ $@"
+    "relay": "yarn run relay-compiler --schema schema/schema.graphql --customScalars.URI=String --language typescript --src ./src/ $@"
   },
   "eslintConfig": {
     "extends": "react-app"
