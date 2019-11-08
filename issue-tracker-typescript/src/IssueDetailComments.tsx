@@ -3,6 +3,8 @@ import React from 'react';
 import { usePaginationFragment } from 'react-relay/hooks';
 import ReactMarkdown from 'react-markdown';
 import SuspenseImage from './SuspenseImage';
+import { IssueDetailRootQuery } from './__generated__/IssueDetailRootQuery.graphql';
+import { IssueDetailComments_issue$key } from './__generated__/IssueDetailComments_issue.graphql';
 
 const { useCallback, useTransition, Suspense, SuspenseList } = React;
 
@@ -11,14 +13,19 @@ const SUSPENSE_CONFIG = { timeoutMs: 2000 };
 /**
  * Renders a list of comments for a given issue.
  */
-export default function IssueDetailComments(props) {
+export default function IssueDetailComments(props: {
+  issue: NonNullable<IssueDetailRootQuery['response']['node']>;
+}) {
   // Given a reference to an issue in props.issue, defines *what*
   // data the component needs about that repository. In this case we fetch
   // the list of comments starting at a given cursor (initially null to start
   // at the beginning of the issues list). See the usePaginationFragment()
   // docs: https://relay.dev/docs/en/experimental/api-reference#usepaginationfragment
   // for more details about how to use this hook to paginate over lists.
-  const { data, hasNext, loadNext, isLoadingNext } = usePaginationFragment(
+  const { data, hasNext, loadNext, isLoadingNext } = usePaginationFragment<
+    IssueDetailRootQuery,
+    IssueDetailComments_issue$key
+  >(
     graphql`
       fragment IssueDetailComments_issue on Issue
         @argumentDefinitions(
@@ -61,7 +68,7 @@ export default function IssueDetailComments(props) {
     });
   }, [isLoadingNext, loadNext, startTransition]);
 
-  const comments = data.comments.edges;
+  const comments = data!.comments.edges;
   if (comments == null || comments.length === 0) {
     return <div className="issue-no-comments">No comments</div>;
   }
@@ -73,34 +80,36 @@ export default function IssueDetailComments(props) {
   return (
     <>
       <SuspenseList revealOrder="forwards">
-        {comments.map(edge => {
-          if (edge == null || edge.node == null) {
-            return null;
-          }
-          const comment = edge.node;
-          return (
-            // Wrap each comment in a separate suspense fallback to allow them to commit
-            // individually; SuspenseList ensures they'll reveal in-order.
-            <Suspense fallback={null} key={edge.__id}>
-              <div className="issue-comment">
-                <SuspenseImage
-                  className="issue-comment-author-image"
-                  title={`${comment.author.login}'s avatar`}
-                  src={comment.author.avatarUrl}
-                />
-                <div className="issue-comment-author-name">
-                  {comment.author.login}
-                </div>
-                <div className="issue-comment-body">
-                  <ReactMarkdown
-                    source={comment.body}
-                    renderers={{ image: SuspenseImage }}
+        {comments
+          .filter(edge => edge != null && edge.node != null)
+          .map(edge => {
+            // if (edge == null || edge.node == null) {
+            //   return null;
+            // }
+            const comment = edge!.node;
+            return (
+              // Wrap each comment in a separate suspense fallback to allow them to commit
+              // individually; SuspenseList ensures they'll reveal in-order.
+              <Suspense fallback={null} key={edge!.__id}>
+                <div className="issue-comment">
+                  <SuspenseImage
+                    className="issue-comment-author-image"
+                    title={`${comment!.author!.login}'s avatar`}
+                    src={comment!.author!.avatarUrl as string}
                   />
+                  <div className="issue-comment-author-name">
+                    {comment!.author!.login}
+                  </div>
+                  <div className="issue-comment-body">
+                    <ReactMarkdown
+                      source={comment!.body}
+                      renderers={{ image: SuspenseImage }}
+                    />
+                  </div>
                 </div>
-              </div>
-            </Suspense>
-          );
-        })}
+              </Suspense>
+            );
+          })}
       </SuspenseList>
       {hasNext ? (
         <button

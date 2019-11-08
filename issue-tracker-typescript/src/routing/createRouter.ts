@@ -1,9 +1,33 @@
-import { createBrowserHistory } from 'history';
-import { matchRoutes } from 'react-router-config';
+import {
+  createBrowserHistory,
+  History,
+  Location,
+  LocationState,
+  BrowserHistoryBuildOptions,
+} from 'history';
+import { matchRoutes, MatchedRoute, RouteConfig } from 'react-router-config';
+import JSResource from '../JSResource';
 
 type Route = {
-  component:
-}
+  component: ReturnType<typeof JSResource>;
+  prepare: {};
+};
+
+type Entry = {
+  location: Location;
+  entries: {};
+};
+
+type Router = {
+  cleanup: () => void;
+  context: {
+    history: History<LocationState>;
+    get: () => Entry;
+    preloadCode: (pathname: string) => void;
+    preload: (pathname: string) => void;
+    subscribe: (cb: () => void) => () => void;
+  };
+};
 
 /**
  * A custom router built from the same primitives as react-router. Each object in `routes`
@@ -11,7 +35,10 @@ type Route = {
  * The router watches for changes to the current location via the `history` package, maps the
  * location to the corresponding route entry, and then preloads the code and data for the route.
  */
-export default function createRouter(routes, options) {
+export default function createRouter(
+  routes: Array<RouteConfig & any>,
+  options?: BrowserHistoryBuildOptions,
+) {
   // Initialize history
   const history = createBrowserHistory(options);
 
@@ -50,17 +77,17 @@ export default function createRouter(routes, options) {
     get() {
       return currentEntry;
     },
-    preloadCode(pathname) {
+    preloadCode(pathname: string) {
       // preload just the code for a route, without storing the result
       const matches = matchRoutes(routes, pathname);
-      matches.forEach(({ route }) => route.component.load());
+      matches.forEach(({ route }) => (route.component as any).load());
     },
-    preload(pathname) {
+    preload(pathname: string) {
       // preload the code and data for a route, without storing the result
       const matches = matchRoutes(routes, pathname);
       prepareMatches(matches);
     },
-    subscribe(cb) {
+    subscribe(cb: () => void) {
       const id = nextId++;
       const dispose = () => {
         subscribers.delete(id);
@@ -77,8 +104,11 @@ export default function createRouter(routes, options) {
 /**
  * Match the current location to the corresponding route entry.
  */
-function matchRoute(routes, location) {
-  const matchedRoutes = matchRoutes(routes, location.pathname);
+function matchRoute<T>(
+  routes: RouteConfig[],
+  location: Location<T>,
+): Array<MatchedRoute<T>> {
+  const matchedRoutes = matchRoutes<T>(routes, location.pathname);
   if (!Array.isArray(matchedRoutes) || matchedRoutes.length === 0) {
     throw new Error('No route for ' + location.pathname);
   }
@@ -88,13 +118,13 @@ function matchRoute(routes, location) {
 /**
  * Load the data for the matched route, given the params extracted from the route
  */
-function prepareMatches(matches) {
+function prepareMatches<T>(matches: Array<MatchedRoute<T>>) {
   return matches.map(match => {
     const { route, match: matchData } = match;
     const prepared = route.prepare(matchData.params);
-    const Component = route.component.get();
+    const Component = (route.component as any).get();
     if (Component == null) {
-      route.component.load(); // eagerly load
+      (route.component as any).load(); // eagerly load
     }
     return { component: route.component, prepared, routeData: matchData };
   });

@@ -5,16 +5,17 @@ import ReactMarkdown from 'react-markdown';
 import SuspenseImage from './SuspenseImage';
 import IssueDetailComments from './IssueDetailComments';
 import IssueActions from './IssueActions';
+import { IssueDetailRootQuery } from './__generated__/IssueDetailRootQuery.graphql';
 
 /**
  * The root component for the issue detail route.
  */
-export default function IssueDetailRoot(props) {
+export default function IssueDetailRoot(props: any) {
   // Defines *what* data the component needs via a query. The responsibility of
   // actually fetching this data belongs to the route definition: it calls
   // preloadQuery() with the query and variables, and the result is passed
   // on props.prepared.issueDetailQuery - see src/routes.js
-  const { node: issue } = usePreloadedQuery(
+  const { node: issue } = usePreloadedQuery<IssueDetailRootQuery>(
     graphql`
       query IssueDetailRootQuery($id: ID!) {
         node(id: $id) {
@@ -46,7 +47,7 @@ export default function IssueDetailRoot(props) {
         #{issue.number} - {issue.title} - {issue.closed ? 'Closed' : 'Open'}
         <a
           className="issue-title-github-link"
-          href={issue.url}
+          href={issue.url as any}
           title="Issue on GitHub"
         >
           View on GitHub
@@ -55,10 +56,10 @@ export default function IssueDetailRoot(props) {
       <div className="issue-comment">
         <SuspenseImage
           className="issue-comment-author-image"
-          title={`${issue.author.login}'s avatar`}
-          src={issue.author.avatarUrl}
+          title={`${issue.author!.login}'s avatar`}
+          src={issue.author!.avatarUrl as string}
         />
-        <div className="issue-comment-author-name">{issue.author.login}</div>
+        <div className="issue-comment-author-name">{issue.author!.login}</div>
         <div className="issue-comment-body">
           <ReactMarkdown
             source={issue.body}

@@ -1,6 +1,7 @@
 import React from 'react';
 
-const RoutingContext = React.createContext(null);
+// FIXME: type context
+const RoutingContext: React.Context<null | any> = React.createContext(null);
 
 /**
  * A custom context instance for our router type

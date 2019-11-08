@@ -1,7 +1,9 @@
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useFragment, useRelayEnvironment } from 'react-relay/hooks';
-import { commitMutation, ConnectionHandler } from 'relay-runtime';
+import { commitMutation, ConnectionHandler, Disposable } from 'relay-runtime';
+import { IssueActions_issue$key } from './__generated__/IssueActions_issue.graphql';
+import { IssueDetailRootQuery } from './__generated__/IssueDetailRootQuery.graphql';
 
 const { useCallback, useState, useEffect, useRef } = React;
 
@@ -46,7 +48,9 @@ const ReopenIssueMutation = graphql`
   }
 `;
 
-export default function IssueActions(props) {
+export default function IssueActions(props: {
+  issue: NonNullable<IssueDetailRootQuery['response']['node']>;
+}) {
   // Get the active Relay environment; developers should always prefer to use the environment
   // from context rather than a singleton, as this keeps the app flexible. For example, this
   // allows you to render part of a UI in a different environment.
@@ -65,11 +69,11 @@ export default function IssueActions(props) {
   // doesn't currently have a `useMutation()` hook - yet! - but when it does, it would implement
   // a pattern like the one here, so product developers don't have to think about it.
   const [isPending, setPending] = useState(false);
-  const pendingMutationRef = useRef(null);
+  const pendingMutationRef = useRef<Disposable | null>(null);
 
   // Get the data we need about the issue in order to execute the mutation. Right now that's just
   // the id, but in the future this component might neeed more information.
-  const data = useFragment(
+  const data = useFragment<IssueActions_issue$key>(
     graphql`
       fragment IssueActions_issue on Issue {
         id
@@ -130,7 +134,7 @@ export default function IssueActions(props) {
           // Insert the edge at the end of the list
           ConnectionHandler.insertEdgeAfter(
             comments,
-            store.getRootField('addComment').getLinkedRecord('commentEdge'),
+            store.getRootField('addComment')!.getLinkedRecord('commentEdge'),
             null, // we can specify a cursor value here to insert the new edge after that  cursor
           );
         },

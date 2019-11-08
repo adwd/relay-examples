@@ -8,8 +8,6 @@ import RoutingContext from './routing/RoutingContext';
 import createRouter from './routing/createRouter';
 import RouterRenderer from './routing/RouteRenderer';
 
-React.lazy(() => import('./IssueDetailComments'));
-
 // Uses the custom router setup to define a router instanace that we can pass through context
 const router = createRouter(routes);
 

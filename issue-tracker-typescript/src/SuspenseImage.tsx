@@ -1,7 +1,9 @@
 import React from 'react';
 import JSResource from './JSResource';
 
-export default function SuspenseImage(props) {
+export default function SuspenseImage(
+  props: React.ImgHTMLAttributes<HTMLImageElement>,
+) {
   const { src } = props;
   if (src != null) {
     // JSResource is meant for loading resources, but the implementation is
@@ -14,11 +16,11 @@ export default function SuspenseImage(props) {
       return new Promise(resolve => {
         const img = new Image();
         img.onload = () => {
-          resolve(src);
+          resolve(src as any);
         };
         img.onerror = error => {
           console.error(error);
-          resolve(src);
+          resolve(src as any);
         };
         img.src = src;
       });

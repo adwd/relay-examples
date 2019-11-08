@@ -1,11 +1,23 @@
-import { Environment, Network, RecordSource, Store } from 'relay-runtime';
+import {
+  Environment,
+  Network,
+  RecordSource,
+  Store,
+  RequestParameters,
+  Variables,
+  CacheConfig,
+} from 'relay-runtime';
 
 /**
  * Relay requires developers to configure a "fetch" function that tells Relay how to load
  * the results of GraphQL queries from your server (or other data source). See more at
  * https://relay.dev/docs/en/quick-start-guide#relay-environment.
  */
-async function fetchRelay(params, variables, _cacheConfig) {
+async function fetchRelay(
+  params: RequestParameters,
+  variables: Variables,
+  _cacheConfig: CacheConfig,
+) {
   // Check that the auth token is configured
   const REACT_APP_GITHUB_AUTH_TOKEN = process.env.REACT_APP_GITHUB_AUTH_TOKEN;
   if (
@@ -60,5 +72,5 @@ export default new Environment({
     // query results, allowing the user to return to recently visited pages
     // and reusing cached data if its available/fresh.
     gcReleaseBufferSize: 10,
-  }),
+  } as any),
 });

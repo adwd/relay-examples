@@ -21,7 +21,7 @@
     "react-router": "^5.1.2",
     "react-router-config": "^5.1.1",
     "react-scripts": "3.2.0",
-    "relay-runtime": "^7.0.0",
+    "relay-runtime": "^7.1.0",
     "typescript": "3.7.2"
   },
   "scripts": {
@@ -48,13 +48,13 @@
     ]
   },
   "devDependencies": {
-    "babel-plugin-relay": "^7.0.0",
+    "babel-plugin-relay": "^7.1.0",
     "concurrently": "^5.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "get-graphql-schema": "^2.1.2",
     "graphql": "^14.5.8",
     "prettier": "^1.18.2",
-    "relay-compiler": "^7.0.0",
+    "relay-compiler": "^7.1.0",
     "relay-compiler-language-typescript": "^10.1.0"
   },
   "husky": {

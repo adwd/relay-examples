@@ -60,14 +60,14 @@ export default function Issues(props: Props) {
 
   return (
     <div className="issues">
-      {data?.issues?.edges?.map(edge => {
-        // if (edge == null || edge.node == null) {
-        //   return null;
-        // }
+      {data!.issues!.edges!.map(edge => {
+        if (edge == null || edge.node == null) {
+          return null;
+        }
         return (
-          <div className="issues-issue" key={edge?.__id}>
+          <div className="issues-issue" key={edge.__id}>
             {/* Note how we also spread IssuesListItem's fragment above */}
-            <IssuesListItem issue={edge?.node} />
+            <IssuesListItem issue={edge.node} />
           </div>
         );
       })}
